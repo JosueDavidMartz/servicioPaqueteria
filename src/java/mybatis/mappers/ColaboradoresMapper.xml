@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="colaborador">
+    <select id="obtenerColaborador" resultType="pojo.Colaborador">
+        SELECT 
+            c.nombre, 
+            c.apellidoPaterno, 
+            c.apellidoMaterno, 
+            c.curp, 
+            c.noPersonal AS numeroPersonal,
+            c.correo,
+            r.nombre AS rol,
+            CASE 
+                WHEN r.nombre = 'conductor' THEN c.numeroLicencia 
+                ELSE NULL 
+            END AS numeroLicencia,
+            r.nombre AS nombreRol
+        FROM colaborador c
+        JOIN rol r ON c.idRol = r.idRol
+    </select>
+
+    <select id= "colaboradorXnoPersonal" resultType="pojo.Colaborador" parameterType="map">
+        SELECT 
+            c.nombre, 
+            c.apellidoPaterno, 
+            c.apellidoMaterno, 
+            c.curp, 
+            c.noPersonal AS numeroPersonal,
+            c.correo,
+            r.nombre AS rol,
+            CASE 
+                WHEN r.nombre = 'conductor' THEN c.numeroLicencia 
+                ELSE NULL 
+            END AS numeroLicencia,
+            r.nombre AS nombreRol
+        FROM colaborador c
+        JOIN rol r ON c.idRol = r.idRol
+        WHERE c.noPersonal = #{noPersonal};
+    </select>
+    
+    <insert id ="registrarColaborador" parameterType="pojo.Colaborador">
+        INSERT INTO colaborador (nombre, apellidoPaterno, apellidoMaterno, 
+        noPersonal, correo, curp, contraseña, idRol, numeroLicencia)
+        VALUES (#{nombre}, #{apellidoPaterno}, #{apellidoMaterno}, 
+        #{numeroPersonal}, #{correo}, #{curp}, #{contraseña}, #{idRol}, #{numeroLicencia}) 
+    </insert>
+    
+    <select id="verificarColaborador" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM colaborador
+        WHERE curp = #{curp} OR noPersonal = #{numeroPersonal}
+    </select>
+    
+    <select id="verificarCURP" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM colaborador
+        WHERE curp = #{curp} AND idColaborador != #{idColaborador}
+    </select>
+
+
+    
+    <update id="editarColaborador" parameterType="pojo.Colaborador"> 
+        UPDATE colaborador
+        SET nombre = #{nombre}, 
+            apellidoPaterno = #{apellidoPaterno}, 
+            apellidoMaterno = #{apellidoMaterno}, 
+            correo = #{correo}, 
+            curp = #{curp}, 
+            contraseña = #{contraseña}, 
+            idRol = #{idRol},
+            numeroLicencia = #{numeroLicencia}
+        WHERE idColaborador = #{idColaborador}
+    </update>
+    
+    <select id= "idColaborador" resultType="pojo.Colaborador">
+        SELECT * FROM colaborador WHERE idColaborador = #{idColaborador};
+    </select>
+    
+    <delete id="eliminarColaborador" parameterType="pojo.Colaborador">
+        DELETE FROM colaborador
+        WHERE idColaborador = #{idColaborador}
+    </delete>
+    
+    <select id="buscarColaborador" parameterType="map" resultType="pojo.Colaborador">
+        SELECT 
+            c.idColaborador,
+            c.nombre, 
+            c.apellidoPaterno, 
+            c.apellidoMaterno, 
+            c.curp, 
+            c.noPersonal AS numeroPersonal,
+            c.correo,
+            CASE 
+                WHEN r.nombre = 'conductor' THEN c.numeroLicencia 
+                ELSE NULL 
+            END AS numeroLicencia,
+            r.nombre AS rol
+        FROM colaborador c
+        JOIN rol r ON c.idRol = r.idRol
+        WHERE 
+            (#{nombre} IS NULL OR #{nombre} = '' OR c.nombre LIKE CONCAT('%', #{nombre}, '%'))
+            AND (#{rol} IS NULL OR #{rol} = '' OR r.nombre LIKE CONCAT('%', #{rol}, '%'))
+            AND (#{numeroPersonal} IS NULL OR #{numeroPersonal} = '' OR c.noPersonal = #{numeroPersonal})
+            AND NOT (
+                (#{nombre} IS NULL OR #{nombre} = '') 
+                AND (#{rol} IS NULL OR #{rol} = '') 
+                AND (#{numeroPersonal} IS NULL OR #{numeroPersonal} = '')
+            )
+    </select>
+    
+    <select id="obtenerConductores" resultType="pojo.Colaborador">
+        SELECT 
+            c.idColaborador,
+            c.nombre
+        FROM colaborador c
+        JOIN rol r ON c.idRol = r.idRol
+        WHERE r.nombre = 'Conductor'
+    </select>
+
+
+</mapper>

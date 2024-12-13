@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED" >
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/fastpacket?serverTimezone=UTC"/>   
+                <property name="username" value="fastadmin"/>    
+                <property name="password" value="cisco"/>
+                <property name="poolMaximumActiveConnections" value="50"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="mybatis/mappers/MapperPrueba.xml"/>
+        <mapper resource="mybatis/mappers/ConductorMapper.xml"/>
+        <mapper resource="mybatis/mappers/EnvioMapper.xml"/>
+        <mapper resource="mybatis/mappers/ColaboradoresMapper.xml" />
+        <mapper resource="mybatis/mappers/ClientesMapper.xml" />
+        <mapper resource="mybatis/mappers/LoginMapper.xml" />
+        <mapper resource="mybatis/mappers/PaquetesMapper.xml" />
+        <mapper resource="mybatis/mappers/UnidadMapper.xml" />
+    
+        
+    </mappers>
+</configuration>
